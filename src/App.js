@@ -68,13 +68,23 @@ class App extends Component {
   }
 
   saveUsername = () => {
-    console.log(this.state.enteredUsername);
-    const data = {userName: this.state.enteredUsername};
-    console.log(data);
+    const data = { userName: this.state.enteredUsername };
     axios.post('/add-user', data)
       .then(() => this.getUser())
       .catch(error => {
         console.log('error making add user post', error);
+      });
+    this.setState({
+      usernameIsEditable: false,
+    });
+  }
+
+  endSession = () => {
+    axios.delete('/end-session')
+      .then(() => this.getUser())
+      .then(() => this.getCount())
+      .catch(error => {
+        console.log('error deleting', error);
       });
     this.setState({
       usernameIsEditable: false,
@@ -98,7 +108,10 @@ class App extends Component {
 
             {this.state.usernameIsEditable ?
               <button onClick={this.saveUsername}>Save Username</button> :
-              <button onClick={this.editUsername}>Edit Username</button>
+              <div>
+                <button onClick={this.editUsername}>Edit Username</button>
+                <button onClick={this.endSession}>Log Out</button>
+              </div>
             }
           </div>
           <p>{this.state.clickCount}</p>

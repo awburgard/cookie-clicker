@@ -32,10 +32,15 @@ app.get('/get-user', (req, res) => {
     res.send(userName);
 });
 
-app.post('/add-user',(req,res)=>{
+app.post('/add-user', (req, res) => {
     req.session.userName = req.body.userName;
     res.sendStatus(200);
 });
+
+app.delete('/end-session', (req, res) => {
+    req.session = null;
+    res.sendStatus(205)
+})
 
 // App Set //
 const PORT = process.env.PORT || 5000;
