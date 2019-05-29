@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 
 const getCookie = (cookieName) => {
   // Get name followed by anything except a semicolon
@@ -14,13 +15,29 @@ class App extends Component {
     username: getCookie('username') || '',
   }
 
+  componentDidMount() {
+    this.getCount();
+  }
+
+  getCount = () => {
+    axios.get('/get-clicks')
+      .then(response => {
+        this.setState({
+          clickCount: response.data.totalClicks,
+        });
+      })
+      .catch(error => {
+        console.log('error making add click post', error);
+      });
+  }
+
   handleChange = (event) => {
-        if (event.target.dataset.name === 'username') {
-            this.setState({
-                username: event.target.value
-            })
-        }
-    };
+    if (event.target.dataset.name === 'username') {
+      this.setState({
+        username: event.target.value
+      })
+    }
+  };
 
   handleClick = () => {
     const newCount = Number(this.state.clickCount) + 1;
@@ -38,7 +55,7 @@ class App extends Component {
 
   saveUsername = () => {
     const newUser = String(this.state.username);
-    document.cookie=`username=${newUser}`;
+    document.cookie = `username=${newUser}`;
     this.setState({
       usernameIsEditable: false,
     });
@@ -47,7 +64,7 @@ class App extends Component {
   render() {
     let inputToShow;
     if (this.state.usernameIsEditable) {
-      inputToShow = <input onChange={this.handleChange} type="text" placeholder="Username" value={this.state.username} data-name="username"/>
+      inputToShow = <input onChange={this.handleChange} type="text" placeholder="Username" value={this.state.username} data-name="username" />
     } else {
       inputToShow = <div></div>
     }
