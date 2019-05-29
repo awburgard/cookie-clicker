@@ -26,6 +26,17 @@ app.get('/get-clicks', (req, res) => {
     res.send({ totalClicks });
 });
 
+app.get('/get-user', (req, res) => {
+    req.session.userName = req.session && req.session.userName || '';
+    const { userName } = req.session;
+    res.send(userName);
+});
+
+app.post('/add-user',(req,res)=>{
+    req.session.userName = req.body.userName;
+    res.sendStatus(200);
+});
+
 // App Set //
 const PORT = process.env.PORT || 5000;
 

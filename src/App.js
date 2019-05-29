@@ -13,10 +13,12 @@ class App extends Component {
     clickCount: getCookie('count') || 0,
     usernameIsEditable: false,
     username: getCookie('username') || '',
+    enteredUsername: '',
   }
 
   componentDidMount() {
     this.getCount();
+    this.getUser();
   }
 
   getCount = () => {
@@ -31,20 +33,32 @@ class App extends Component {
       });
   }
 
+  getUser = () => {
+    axios.get('/get-user')
+      .then(response => {
+        this.setState({
+          username: response.data,
+        });
+      })
+      .catch(error => {
+        console.log('error making add user post', error);
+      });
+  }
+
   handleChange = (event) => {
     if (event.target.dataset.name === 'username') {
       this.setState({
-        username: event.target.value
+        enteredUsername: event.target.value
       })
     }
   };
 
   handleClick = () => {
-    const newCount = Number(this.state.clickCount) + 1;
-    document.cookie = `count=${newCount}`;
-    this.setState({
-      clickCount: newCount,
-    });
+    axios.post('/add-click')
+      .then(() => this.getCount())
+      .catch(error => {
+        console.log('error making add click post', error);
+      });
   }
 
   editUsername = () => {
@@ -54,8 +68,14 @@ class App extends Component {
   }
 
   saveUsername = () => {
-    const newUser = String(this.state.username);
-    document.cookie = `username=${newUser}`;
+    console.log(this.state.enteredUsername);
+    const data = {userName: this.state.enteredUsername};
+    console.log(data);
+    axios.post('/add-user', data)
+      .then(() => this.getUser())
+      .catch(error => {
+        console.log('error making add user post', error);
+      });
     this.setState({
       usernameIsEditable: false,
     });
@@ -64,7 +84,7 @@ class App extends Component {
   render() {
     let inputToShow;
     if (this.state.usernameIsEditable) {
-      inputToShow = <input onChange={this.handleChange} type="text" placeholder="Username" value={this.state.username} data-name="username" />
+      inputToShow = <input onChange={this.handleChange} type="text" placeholder="Username" value={this.state.enteredUsername} data-name="username" />
     } else {
       inputToShow = <div></div>
     }
