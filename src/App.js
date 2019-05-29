@@ -7,16 +7,11 @@ const getCookie = (cookieName) => {
   return decodeURIComponent(!!cookieString ? cookieString.toString().replace(/^[^=]+./, '') : '');
 }
 
-const getUserName = (userName) => {
-  const usernameString = RegExp('' + userName + '[^;]+').exec(document.cookie);
-  return decodeURIComponent(!!usernameString ? usernameString.toString().replace(/^[^=]+./, '') : '');
-}
-
 class App extends Component {
   state = {
     clickCount: getCookie('count') || 0,
     usernameIsEditable: false,
-    username: getUserName('username') || '',
+    username: getCookie('username') || '',
   }
 
   handleChange = (event) => {
